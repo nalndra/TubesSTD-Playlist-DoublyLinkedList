@@ -1,232 +1,206 @@
 #include "DLL.h"
-#include <iostream>
-using namespace std;
 
-// ==========================================
-// PLAYLIST LAGU
-// ==========================================
-
-// Inisialisasi list playlist kosong
-void createListPlaylist(ListPlaylist &L) {
-    L.first = NULL;
-    L.last = NULL;
-    L.current = NULL;
+void createListKasus(ListKasus &L)
+{
+    L.first = nullptr;
+    L.last = nullptr;
 }
 
-// Membuat elemen lagu baru
-adrLagu createElmLagu(InfotypeLagu data) {
-    adrLagu P = new ElmLagu;
-    P->info = data;
-    P->next = NULL;
-    P->prev = NULL;
-    return P;
+bool isEmptyKasus(ListKasus L)
+{
+    return L.first == nullptr;
 }
 
-// Menambah lagu ke akhir playlist
-void insertLastLagu(ListPlaylist &L, adrLagu P) {
-    if (L.first == NULL && L.last == NULL) {
-        // Jika playlist kosong
-        L.first = P;
-        L.last = P;
-        L.current = P;  // Set current ke lagu pertama
-    } else {
-        // Menambahkan node baru di akhir
-        P->prev = L.last;
-        L.last->next = P;
-        L.last = P;
+bool isEmptyPenyebab(adrKasus p)
+{
+    return p->firstPenyebab == nullptr;
+}
+
+adrKasus createElemenKasus(string id, string nama, int umur)
+{
+    adrKasus p = new elemenKasus;
+    p->info.idKasus = id;
+    p->info.namaMayat = nama;
+    p->info.umur = umur;
+    p->next = nullptr;
+    p->prev = nullptr;
+    p->firstPenyebab = nullptr;
+    return p;
+}
+
+adrPenyebab createElemenPenyebab(string sebab)
+{
+    adrPenyebab q = new elemenPenyebab;
+    q->info.deskripsi = sebab;
+    q->next = nullptr;
+    q->prev = nullptr;
+    return q;
+}
+
+void addKasus(ListKasus &L, adrKasus p)
+{
+    if (isEmptyKasus(L))
+    {
+        L.first = p;
+        L.last = p;
+    }
+    else
+    {
+        L.last->next = p;
+        p->prev = L.last;
+        L.last = p;
     }
 }
 
-// Menghapus lagu berdasarkan judul
-void deleteLaguByTitle(ListPlaylist &L, string title) {
-    if (L.first == NULL && L.last == NULL) {
-        return;
+void addPenyebab(adrKasus &p, adrPenyebab q)
+{
+    if (isEmptyPenyebab(p))
+    {
+        p->firstPenyebab = q;
     }
-
-    // Cari pointer lagu yang akan dihapus
-    adrLagu P = findLagu(L, title);
-
-    if (P == NULL) {
-        return;
-    }
-
-    // Jika node yang dihapus adalah current, pindahkan current
-    if (P == L.current) {
-        if (L.current->next != NULL) {
-            L.current = L.current->next;
-        } else if (L.current->prev != NULL) {
-            L.current = L.current->prev;
-        } else {
-            L.current = NULL;  // Playlist akan kosong
+    else
+    {
+        adrPenyebab r = p->firstPenyebab;
+        while (r->next != nullptr)
+        {
+            r = r->next;
         }
+        r->next = q;
+        q->prev = r;
     }
-
-    // Menghapus node dari linked list
-    if (P == L.first && P == L.last) {
-        // Case: Hanya ada 1 elemen dalam list
-        L.first = NULL;
-        L.last = NULL;
-    } else if (P == L.first) {
-        // Case: Hapus elemen pertama
-        L.first = P->next;
-        L.first->prev = NULL;
-    } else if (P == L.last) {
-        // Case: Hapus elemen terakhir
-        L.last = P->prev;
-        L.last->next = NULL;
-    } else {
-        // Case: Hapus elemen di tengah
-        adrLagu prec = P->prev;
-        adrLagu succ = P->next;
-        prec->next = succ;
-        succ->prev = prec;
-    }
-
-    delete P;
 }
 
-// Mencari lagu berdasarkan judul
-adrLagu findLagu(ListPlaylist L, string title) {
-    adrLagu P = L.first;
-    while (P != NULL) {
-        if (P->info.title == title) {
-            return P;
+adrKasus searchKasus(ListKasus L, string id)
+{
+    adrKasus p = L.first;
+    while (p != nullptr)
+    {
+        if (p->info.idKasus == id)
+        {
+            return p;
         }
-        P = P->next;
+        p = p->next;
     }
-    return NULL;
+    return nullptr;
 }
 
-// Memutar lagu berikutnya
-void nextSong(ListPlaylist &L) {
-    if (L.first == NULL && L.last == NULL) {
-        return;
-    }
+void displayList(ListKasus L)
+{
+    adrKasus p = L.first;
+    while (p != nullptr)
+    {
+        cout << "Kasus ID   : " << p->info.idKasus << endl;
+        cout << "Nama Mayat : " << p->info.namaMayat << endl;
+        cout << "Umur       : " << p->info.umur << endl;
 
-    if (L.current == NULL) {
-        L.current = L.first;
-    } else if (L.current->next != NULL) {
-        L.current = L.current->next;
-    } else {
-        // Jika sudah di akhir, kembali ke awal (circular)
-        L.current = L.first;
-    }
-
-    displayCurrent(L);
-}
-
-// Memutar lagu sebelumnya
-void previousSong(ListPlaylist &L) {
-    if (L.first == NULL && L.last == NULL) {
-        return;
-    }
-
-    if (L.current == NULL) {
-        L.current = L.last;
-    } else if (L.current->prev != NULL) {
-        L.current = L.current->prev;
-    } else {
-        // Jika sudah di awal, pindah ke akhir (circular)
-        L.current = L.last;
-    }
-
-    displayCurrent(L);
-}
-
-// Menampilkan playlist dari awal ke akhir
-void displayForward(ListPlaylist L) {
-    if (L.first == NULL && L.last == NULL) {
-        return;
-    }
-
-    cout << "\n========================================================" << endl;
-    cout << "        PLAYLIST (Awal -> Akhir)" << endl;
-    cout << "--------------------------------------------------------" << endl;
-    adrLagu P = L.first;
-    int index = 1;
-
-    while (P != NULL) {
-        cout << "  " << index << ". " << P->info.title << " - " << P->info.artist;
-        if (P == L.current) {
-            cout << " [SEDANG DIPUTAR]";
+        cout << "Penyebab Kematian: ";
+        adrPenyebab q = p->firstPenyebab;
+        while (q != nullptr)
+        {
+            cout << q->info.deskripsi << ", ";
+            q = q->next;
         }
-        cout << endl;
-        P = P->next;
-        index++;
+        cout << endl
+             << endl;
+
+        p = p->next;
     }
-    cout << "--------------------------------------------------------" << endl;
-    cout << "Total: " << getSize(L) << " lagu" << endl;
-    cout << "========================================================\n" << endl;
 }
 
-// Menampilkan playlist dari akhir ke awal
-void displayBackward(ListPlaylist L) {
-    if (L.first == NULL && L.last == NULL) {
+void displayKasus(adrKasus p)
+{
+    if (p == nullptr)
+    {
+        cout << "Tidak ada kasus aktif.\n";
         return;
     }
 
-    cout << "\n========================================================" << endl;
-    cout << "        PLAYLIST (Akhir -> Awal)" << endl;
-    cout << "--------------------------------------------------------" << endl;
-    adrLagu P = L.last;
-    int index = getSize(L);
+    cout << "ID Kasus : " << p->info.idKasus << endl;
+    cout << "Nama     : " << p->info.namaMayat << endl;
+    cout << "Umur     : " << p->info.umur << endl;
 
-    while (P != NULL) {
-        cout << "  " << index << ". " << P->info.title << " - " << P->info.artist;
-        if (P == L.current) {
-            cout << " [SEDANG DIPUTAR]";
-        }
-        cout << endl;
-        P = P->prev;
-        index--;
+    cout << "Penyebab Kematian: ";
+    adrPenyebab q = p->firstPenyebab;
+    while (q != nullptr)
+    {
+        cout << q->info.deskripsi << ", ";
+        q = q->next;
     }
-    cout << "--------------------------------------------------------" << endl;
-    cout << "Total: " << getSize(L) << " lagu" << endl;
-    cout << "========================================================\n" << endl;
+    cout << endl;
 }
 
-// Menampilkan lagu yang sedang diputar
-void displayCurrent(ListPlaylist &L) {
-    if (L.first == NULL && L.last == NULL) {
+void nextKasus(adrKasus &current)
+{
+    if (current && current->next)
+        current = current->next;
+    else
+        cout << "Tidak ada kasus berikutnya.\n";
+}
+
+void prevKasus(adrKasus &current)
+{
+    if (current && current->prev)
+        current = current->prev;
+    else
+        cout << "Tidak ada kasus sebelumnya.\n";
+}
+
+void deleteKasus(ListKasus &L, adrKasus &current)
+{
+    if (current == nullptr)
+    {
+        cout << "Tidak ada kasus yang bisa dihapus.\n";
         return;
     }
 
-    if (L.current == NULL) {
-        L.current = L.first;
+    adrKasus p = current;
+
+    if (p == L.first)
+        L.first = p->next;
+    if (p == L.last)
+        L.last = p->prev;
+
+    if (p->prev)
+        p->prev->next = p->next;
+    if (p->next)
+        p->next->prev = p->prev;
+
+    current = (p->next != nullptr) ? p->next : p->prev;
+
+    // hapus child
+    adrPenyebab q;
+    while (p->firstPenyebab != nullptr)
+    {
+        q = p->firstPenyebab;
+        p->firstPenyebab = q->next;
+        delete q;
     }
 
-    cout << "\n========================================================" << endl;
-    cout << "              SEDANG DIPUTAR" << endl;
-    cout << "--------------------------------------------------------" << endl;
-    cout << "  " << L.current->info.title << " - " << L.current->info.artist << endl;
-    cout << "========================================================\n" << endl;
+    delete p;
+    cout << "Kasus berhasil dihapus.\n";
 }
 
-// Mengecek apakah playlist kosong
-bool isEmpty(ListPlaylist L) {
-    return (L.first == NULL && L.last == NULL);
-}
-
-// Mendapatkan jumlah lagu dalam playlist
-int getSize(ListPlaylist L) {
+int countKasus(ListKasus L)
+{
     int count = 0;
-    adrLagu P = L.first;
-    while (P != NULL) {
+    adrKasus p = L.first;
+    while (p != nullptr)
+    {
         count++;
-        P = P->next;
+        p = p->next;
     }
     return count;
 }
 
-// Menghapus semua lagu
-void clearPlaylist(ListPlaylist &L) {
-    adrLagu P = L.first;
-    while (P != NULL) {
-        adrLagu next = P->next;
-        delete P;
-        P = next;
+void deleteAllKasus(ListKasus &L)
+{
+    adrKasus p = L.first;
+    while (p != nullptr)
+    {
+        adrKasus temp = p;
+        p = p->next;
+        deleteKasus(L, temp);
     }
-    L.first = NULL;
-    L.last = NULL;
-    L.current = NULL;
+    L.first = nullptr;
+    L.last = nullptr;
 }

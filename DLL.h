@@ -1,65 +1,58 @@
-#ifndef DLL_H
-#define DLL_H
-
-#include <string>
+#ifndef MLL_H_INCLUDED
+#define MLL_H_INCLUDED
+#include <iostream>
 using namespace std;
 
-// ==========================================
-// INFOTYPE LAGU
-// ==========================================
-struct InfotypeLagu {
-    string title;
-    string artist;
+typedef struct elemenKasus *adrKasus;
+typedef struct elemenPenyebab *adrPenyebab;
+
+struct Kasus
+{
+    string idKasus;
+    string namaMayat;
+    int umur;
+};
+struct Penyebab
+{
+    string deskripsi;
+};
+struct elemenKasus
+{
+    Kasus info;
+    adrKasus next;
+    adrKasus prev;
+    adrPenyebab firstPenyebab;
+};
+struct elemenPenyebab
+{
+    Penyebab info;
+    adrPenyebab next;
+    adrPenyebab prev;
+};
+struct ListKasus
+{
+    adrKasus first;
+    adrKasus last;
 };
 
-// ==========================================
-// ELEMENT LAGU
-// ==========================================
-struct ElmLagu {
-    InfotypeLagu info;
-    ElmLagu* prev;
-    ElmLagu* next;
-};
+void createListKasus(ListKasus &L);
+bool isEmptyKasus(ListKasus L);
+bool isEmptyPenyebab(adrKasus p);
 
-typedef ElmLagu* adrLagu;
+adrKasus createElemenKasus(string id, string nama, int umur);
+adrPenyebab createElemenPenyebab(string sebab);
 
-// ==========================================
-// LIST PLAYLIST
-// ==========================================
-struct ListPlaylist {
-    adrLagu first;
-    adrLagu last;
-    adrLagu current;  // Pointer ke lagu yang sedang diputar
-};
+void addKasus(ListKasus &L, adrKasus p);
+void addPenyebab(adrKasus &p, adrPenyebab q);
 
-// ==========================================
-// FUNGSI-FUNGSI PLAYLIST
-// ==========================================
+adrKasus searchKasus(ListKasus L, string id);
+void displayList(ListKasus L);
 
-void createListPlaylist(ListPlaylist &L); // Inisialisasi list playlist kosong
+void deleteKasus(ListKasus &L, adrKasus &current);
+void nextKasus(adrKasus &current);
+void prevKasus(adrKasus &current);
+void displayKasus(adrKasus p);
+int countKasus(ListKasus L);
+void deleteAllKasus(ListKasus &L);
 
-adrLagu createElmLagu(InfotypeLagu data); // Membuat elemen lagu baru
-
-void insertLastLagu(ListPlaylist &L, adrLagu P); // Menambah lagu ke akhir playlist
-
-void deleteLaguByTitle(ListPlaylist &L, string title);// Menghapus lagu berdasarkan judul
-
-adrLagu findLagu(ListPlaylist L, string title); // Mencari lagu berdasarkan judul
- 
-void nextSong(ListPlaylist &L); // Memutar lagu berikutnya
-
-void previousSong(ListPlaylist &L); // Memutar lagu sebelumnya
-
-void displayForward(ListPlaylist L); // Menampilkan playlist dari awal ke akhir
-
-void displayBackward(ListPlaylist L); // Menampilkan playlist dari akhir ke awal
-
-void displayCurrent(ListPlaylist &L); // Menampilkan lagu yang sedang diputar
-
-bool isEmpty(ListPlaylist L); // Mengecek apakah playlist kosong
-
-int getSize(ListPlaylist L); // Mendapatkan jumlah lagu dalam playlist
-
-void clearPlaylist(ListPlaylist &L); // Menghapus semua lagu
-
-#endif // DLL_H
+#endif
