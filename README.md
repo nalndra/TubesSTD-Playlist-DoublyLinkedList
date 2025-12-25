@@ -1,4 +1,4 @@
-# Autopsy Case Manager
+# 🏥Autopsy Case Manager🩻
 
 Program manajemen kasus autopsi menggunakan struktur data **Doubly Linked List (DLL)** dan **Multi Linked List (MLL)**. Program ini dibuat sebagai tugas besar mata kuliah Struktur Data.
 
@@ -72,16 +72,6 @@ struct ListKasus {
 };
 ```
 
-## Struktur File
-
-```
-tubesSTD/
-├── DLL.h          # Header file (deklarasi struktur dan fungsi)
-├── DLL.cpp        # Implementasi fungsi-fungsi DLL dan MLL
-├── main.cpp       # Program utama dengan menu interaktif
-└── README.md      # Dokumentasi program
-```
-
 ## Requirements
 
 - **Compiler**: g++ (GNU C++ Compiler) atau compiler C++ lainnya
@@ -94,7 +84,7 @@ tubesSTD/
 
 1. **Kompilasi program:**
    ```powershell
-   g++ -o autopsy main.cpp DLL.cpp
+   g++ -o autopsy main.cpp MLL.cpp
    ```
 
 2. **Jalankan program:**
@@ -106,7 +96,7 @@ tubesSTD/
 
 1. **Kompilasi program:**
    ```bash
-   g++ -o autopsy main.cpp DLL.cpp
+   g++ -o autopsy main.cpp MLL.cpp
    ```
 
 2. **Jalankan program:**
@@ -117,9 +107,8 @@ tubesSTD/
 ## Cara Penggunaan
 
 1. **Jalankan program** menggunakan perintah di atas
-2. Program akan otomatis menginisialisasi dengan **3 kasus contoh** (dummy data)
-3. Pilih menu dengan memasukkan angka (1-11 atau 0 untuk exit)
-4. Ikuti instruksi yang muncul di layar
+2. Pilih menu dengan memasukkan angka (1-11 atau 0 untuk exit)
+3. Ikuti instruksi yang muncul di layar
 
 ### Contoh Menu
 
@@ -133,7 +122,7 @@ tubesSTD/
  [4] Kasus Berikutnya
  [5] Kasus Sebelumnya
  [6] Tampilkan Arsip (Awal -> Akhir)
- [7] Tampilkan Arsip (Akhir -> Akhir)
+ [7] Tampilkan Arsip (Akhir -> Awal)
  [8] Tampilkan Kasus Sedang Dianalisis
  [9] Cari Kasus Mayat
  [10] Jumlah Kasus dalam Arsip
@@ -200,31 +189,6 @@ Penyebab Kematian: Trauma kepala berat, Pendarahan internal,
 | `displayKasus(adrKasus p)` | Menampilkan detail satu kasus |
 | `displayList(ListKasus L)` | Menampilkan semua kasus (forward) |
 
-## Data Inisialisasi (Dummy Data)
-
-Program secara otomatis menginisialisasi dengan 3 kasus contoh:
-
-### Kasus 1: K001
-- **Nama**: John Doe
-- **Umur**: 45 tahun
-- **Penyebab Kematian**:
-  - Trauma kepala berat
-  - Pendarahan internal
-
-### Kasus 2: K002
-- **Nama**: Jane Smith
-- **Umur**: 32 tahun
-- **Penyebab Kematian**:
-  - Keracunan sianida
-  - Gagal napas akut
-
-### Kasus 3: K003
-- **Nama**: Michael Brown
-- **Umur**: 58 tahun
-- **Penyebab Kematian**:
-  - Serangan jantung
-  - Komplikasi diabetes
-
 ## Konsep Struktur Data yang Diterapkan
 
 ### Doubly Linked List (DLL)
@@ -250,9 +214,10 @@ Program secara otomatis menginisialisasi dengan 3 kasus contoh:
 
 - **Case-Sensitive**: Pencarian ID kasus bersifat case-sensitive
 - **Current Pointer**: Pointer `current` otomatis terupdate saat:
-  - Kasus pertama ditambahkan → set ke kasus baru
+  - Menambah kasus baru → set ke kasus yang baru ditambahkan
   - Kasus dihapus → berpindah ke next atau prev
   - Navigasi next/prev → berpindah sesuai arah
+  - Mencari kasus → set ke kasus yang ditemukan
 - **Cascade Delete**: Menghapus kasus akan otomatis menghapus semua penyebab kematiannya
 - **Validasi**: Program akan memberikan notifikasi jika operasi tidak valid (contoh: kasus tidak ditemukan, navigasi dari list kosong)
 
